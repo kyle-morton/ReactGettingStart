@@ -19,9 +19,23 @@ class Button extends React.Component {
     state = { counter: 0 };
     handleClick = () => {
       //this === component instance in DOM
-      this.setState({
-          counter: this.state.counter + 1
-      })
+      
+          
+      //SetState below is async SO it could result
+      //in a race condition if multiple calls are 
+      //made to it and batched
+      // this.setState({
+      // 	counter: this.state.counter + 1
+      // })
+      
+      //below method is useful when updating 
+      //state depending on it's current state (or value)
+      this.setState((prevState) => {
+          return {
+            counter: prevState.counter + 1
+        };
+      });
+      
     }
       render() {
       return (
