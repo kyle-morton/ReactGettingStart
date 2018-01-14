@@ -6,47 +6,55 @@
 //   );
 // }
 
+const Result = (props) => {
+	return(
+  	<div>{props.counter}</div>
+  );
+};
+
 class Button extends React.Component {
-    //CURRENT WAY OF SETTING STATE
-      // constructor(props) {
-      // super(props);
-      // this.state = {
-      // counter: 0 //init at 0 to start
-      // };
-      // }
-    
-    //NEW WAY (SOON TO BE PART OF JS LANGUAGE)
-    state = { counter: 0 };
-    handleClick = () => {
-      //this === component instance in DOM
-      
-          
-      //SetState below is async SO it could result
-      //in a race condition if multiple calls are 
-      //made to it and batched
-      // this.setState({
-      // 	counter: this.state.counter + 1
-      // })
-      
-      //below method is useful when updating 
-      //state depending on it's current state (or value)
-      this.setState((prevState) => {
-          return {
-            counter: prevState.counter + 1
-        };
-      });
-      
-    }
-      render() {
-      return (
-        <button onClick={this.handleClick}>
-              {this.state.counter}
-        </button>
-      );
-    }
+	handleClick = () => {
+  	this.props.onClickFunction(this.props.incrementValue);
   }
-  
-  ReactDOM.render(<Button />, mountNode);
-  
-  
-  
+	render() {
+    return (
+      <button onClick={this.handleClick}>
+            +{this.props.incrementValue}
+      </button>
+    );
+  }
+}
+
+/*
+	REM: React requires a single component in the 
+  ReactDOM.render method so you must wrap any 
+  adjacent components in a wrapper (App) to satisfy this
+*/
+
+class App extends React.Component {
+	state = { counter: 0 }
+  incrementCounter = (incrementValue) => {
+  	//REM: this is used when updating state based on 		       current value
+    this.setState((prevState) => {
+        return {
+          counter: prevState.counter + incrementValue
+      };
+    });
+  };
+ 	render() {
+  	return (
+    	<div>
+      	<Button incrementValue={1} onClickFunction={this.incrementCounter}/>
+        <Button incrementValue={5} onClickFunction={this.incrementCounter}/>
+        <Button incrementValue={10} onClickFunction={this.incrementCounter}/>
+        <Button incrementValue={100} onClickFunction={this.incrementCounter}/>
+                                
+        <Result counter={this.state.counter}/>
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<App />, mountNode);
+
+
