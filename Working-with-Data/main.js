@@ -11,27 +11,60 @@ const Card = (props) => {
   );
 }
 
-//sample data -> eventually will come from API
-let data = [
-	{ 
-  	name: 'Kyle Morton',  
-    avatar_url: 'https://avatars2.githubusercontent.com/u/6462572?v=4',
-    company: 'Dassault Falcon Jet'
-  },
-  { 
-  	name: 'Tom Preston-Werner',  
-    avatar_url: 'https://avatars0.githubusercontent.com/u/1?v=4',
-    company: ''
-  }
-]
-
 const CardList = (props) => {
 	return(
   	<div>
-    	{props.cards.map(card => <Card {...card} />)}
+    	{props.cards.map(card => <Card key={card.id} {...card} />)}
       
     </div>
   );
 }
 
-ReactDOM.render(<CardList cards={data} />, mountNode);
+class Form extends React.Component {
+		state = {
+    	username: ''
+    }
+		handleSubmit = (event) => {
+    	event.preventDefault();
+    	//we can use Axios library for ajax request
+      axios.get('https://api.github.com/users/' + this.state.username)
+      .then(resp => {
+          this.props.onSubmit(resp.data);
+          this.setState({
+          	username: ''
+          })
+      });
+    }
+    render() {
+      return(
+        <form onSubmit={this.handleSubmit}>
+          <input type="text"
+          value={this.state.username}
+          onChange={(event) => this.setState({ username: event.target.value})}
+          placeholder="Github username" required />
+          <button type="submit">Add Card</button>
+        </form>
+      );
+    }
+}
+
+class App extends React.Component {
+		state = {
+    	cards: []
+    }
+    addNewCard = (cardInfo) => {
+    	this.setState(prevState  => ({
+      	cards: prevState.cards.concat(cardInfo)
+      }));
+    }
+		render() {
+    	return(
+      	<div>
+        	<Form onSubmit={this.addNewCard}/>
+          <CardList cards={this.state.cards} />
+        </div>
+      );
+    }
+}
+
+ReactDOM.render(<App />, mountNode);
