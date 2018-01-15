@@ -1,10 +1,13 @@
 const Stars = () => {
+	//rand between 0 & 9, add 1 to ensure > 0
+	const numberOfStars = 1 + Math.floor(Math.random()*9); 
+  
+  //react knows to render this array similar to for-each b/c elements are 								//react html elements
 	return(
   	<div className="col-5">
-    	<i className="fa fa-star"></i>
-      <i className="fa fa-star"></i>
-      <i className="fa fa-star"></i>
-      <i className="fa fa-star"></i>
+    	{_.range(numberOfStars).map(i => 
+      	<i key={i} class="fa fa-star"></i>
+      )} 
     </div>
   );
 }
@@ -22,7 +25,8 @@ const Button = () => {
 const Answer = () => {
 	return(
   	<div className="col-5">
-    ...
+    	<span>5</span>
+      <span>6</span>
     </div>
   );
 }
@@ -31,14 +35,16 @@ const Numbers = () => {
 	return(
   	<div className="card text-center">
     	<div>
-    	  <span>1</span>
-        <span className="selected">2</span>
-        <span className="used">3</span>
-        
+      	{Numbers.list.map((number,i) => 
+        	<span key={i}>{number}</span>
+        )}
     	</div>
     </div>
   );
 }
+
+//REM: this creates a static property that all instances of Numbers will share
+Numbers.list =  _.range(1, 10); //lodash util -> array between 1 & 9
 
 class Game extends React.Component {
 	
