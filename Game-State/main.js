@@ -106,6 +106,17 @@ const Stars = (props) => {
     );
   }
   
+  const Timer = (props) => {
+  	return(
+    	<div>
+      	<h5>Time Remaining - 00:{props.secondsRemaining > 10 
+        														? props.secondsRemaining 
+                                    : '0' + props.secondsRemaining } 
+        </h5>
+      </div>
+    );
+  }
+  
   //REM: this creates a static property that all instances of Numbers will share
   Numbers.list =  _.range(1, 10); //lodash util -> array between 1 & 9
   
@@ -114,17 +125,39 @@ const Stars = (props) => {
       return 1 + Math.floor(Math.random()*9);
     }
     initState = () => {
-    	return {
+    	const startSeconds = 5;
+    	const newState = {
         selectedNumbers: [],
         usedNumbers: [],
         numberOfStars: Game.randomNumber(),
         answerIsCorrect: null, //null -> no answer being checked
         redraws: 5, 
-        doneStatus: null
+        doneStatus: null,
+        timeInterval: startSeconds,
+        timeRemaining: startSeconds
      };
+
+//      	setTimeout(() => {
+//       	if (this.state.doneStatus)
+//         	return; //skip if doneStatus already set
+          
+//        	this.setState({ doneStatus: 'Time is up!!!' })
+//       }, newState.timeInterval * 1000);
+
+      setInterval(() => {
+      	if (this.state.timeRemaining < 1)
+        	return;
+      
+				this.setState(prevState => ({
+        	timeRemaining: prevState.timeRemaining - 1,
+          doneStatus: (prevState.timeRemaining - 1) > 0 ? prevState.doneStatus : 'Time is up!'
+        }));
+      }, 1000); //every second
+
+    	return newState;
     }
     state = this.initState();
-  
+    
     selectNumber = (clickedNumber) => {
         if(this.state.selectedNumbers.indexOf(clickedNumber) >= 0)
           return;
@@ -204,11 +237,13 @@ const Stars = (props) => {
           answerIsCorrect,
           usedNumbers,
           redraws,
-          doneStatus
+          doneStatus,
+          timeRemaining
         } = this.state;
         return(
           <div className="container">
                <h3>Play Nine</h3> 
+               <Timer  secondsRemaining={timeRemaining}/>
           <hr />
           <div className="row">
             <Stars numberOfStars={numberOfStars}/>
