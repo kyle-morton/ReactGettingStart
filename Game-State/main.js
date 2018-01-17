@@ -125,7 +125,7 @@ const Stars = (props) => {
       return 1 + Math.floor(Math.random()*9);
     }
     initState = () => {
-    	const startSeconds = 5;
+    	const startSeconds = 60;
     	const newState = {
         selectedNumbers: [],
         usedNumbers: [],
